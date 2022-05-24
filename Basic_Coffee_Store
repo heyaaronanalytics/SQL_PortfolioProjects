@@ -59,3 +59,29 @@ WHERE name = 'Americano';
 UPDATE products
 SET coffee_origin = 'Columbia'
 WHERE coffee_origin = 'Brazil';
+
+/* Exercises using SELECT STATMENTS */
+
+-- From the customers table, select the first name and phone number for all the females who have the last name of Bluth
+
+SELECT first_name, phone_number FROM customers
+WHERE gender = 'F'
+AND last_name = 'Bluth';
+
+-- From the products table, select the name for all the products that have a price greater than 3.00 or a coffee origin of SriLanka
+
+SELECT name FROM products
+Where price > 3.00
+OR coffee_origin = 'Sri Lanka';
+
+-- How many male customers don't have a phone number entered into the customers table?
+
+-- Instructor's Solution
+SELECT * FROM customers
+WHERE gender = 'M'
+AND phone_number IS NULL;
+
+--My Solution
+SELECT COUNT(*) FROM customers
+WHERE gender = 'M'
+AND phone_number IS NULL;
