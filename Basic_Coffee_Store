@@ -127,7 +127,7 @@ ORDER BY last_name;
 	
 WITH LastNames AS
 (
-	SELECT *, ROW-NUMBER() OVER(PARTITION BY last_name) AS ranks
+	SELECT *, ROW_NUMBER() OVER(PARTITION BY last_name) AS ranks
 	FROM customers
 )
 SELECT last_name FROM LastNames
