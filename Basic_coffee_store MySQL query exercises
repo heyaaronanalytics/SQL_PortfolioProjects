@@ -1,0 +1,112 @@
+USE basic_coffee_store;
+
+  /* From the customers table, select the first name and phone number 
+  for all the females who have the last name of Bluth */
+
+      SELECT first_name, phone_number FROM customers
+      WHERE gender = 'F'
+      AND last_name = 'Bluth';
+
+  /* From the products table, select the name for all the products 
+  that have a price greater than 3.00 or a coffee origin of Sri Lanka */
+
+      SELECT name FROM products
+      Where price > 3.00
+      OR coffee_origin = 'Sri Lanka';
+
+  /* How many male customers don't have a phone number 
+  entered into the customers table? */
+
+      SELECT COUNT(*) FROM customers
+      WHERE gender = 'M'
+      AND phone_number IS NULL;
+
+  /* From the products table, select the name and price of all products 
+  with a coffee origin equal to Colombia or Indonesia. Ordered by name from A-Z */
+
+      SELECT name, price FROM products
+      WHERE coffee_origin IN ('Colombia','Indonesia')
+      ORDER BY name;
+
+  /* From the orders table, select all the orders 
+  from February 2017 for customers with id's of 2,4,6, or 8 */
+
+    --Solution using BETWEEN
+	
+      SELECT * FROM orders
+      WHERE order_time BETWEEN '2017-02-01' AND '2017-02-28'
+      AND customer_id IN (2,4,6,8);
+
+    --Solution using Date Funtions
+	
+      SELECT * FROM orders
+      WHERE MONTH(order_time) = 02
+      AND YEAR(order_time) = 2017
+      AND customer_id IN (2,4,6,8);
+
+  /* From the customers table, select the first name and phone number 
+  of all customers who's last name contains the pattern 'ar' */
+
+      SELECT first_name, phone_number FROM customers
+      WHERE last_name LIKE '%ar%';
+
+  /* From the customers table, select distinct last names 
+  and order alphabetically from A-Z */
+
+    --Solution using DISTINCT
+
+      SELECT DISTINCT(last_name) FROM customers
+      ORDER BY last_name;
+
+    --Solution using ROW_NUMBER
+	
+      WITH LastNames AS
+      (
+        SELECT *, ROW_NUMBER() OVER(PARTITION BY last_name) AS ranks
+        FROM customers
+      )
+      SELECT last_name FROM LastNames
+      WHERE ranks = 1
+      ORDER BY last_name;
+
+  /* From the orders table, select the first 3 orders 
+  placed by customer with id 1, in February 2017 */
+
+      SELECT * FROM orders
+      WHERE customer_id = 1
+      AND YEAR(order_time) = 2017
+      AND Month(order_time) = 02
+      ORDER BY order_time ASC
+      LIMIT 3;
+
+  /* From the products table, select the name, price and coffee origin
+  but rename the price to retail_price in the results set */
+
+      SELECT name, price AS retail_price, coffee_origin FROM products;
+
+--Exercises using JOINS
+
+  /* Select the order id and customer phone numbers 
+  for all orders of product id 4 */
+
+      SELECT o.id, c.phone_number FROM orders o
+      JOIN customers c ON o.customer_id = c.id
+      WHERE o.product_id = 4;
+
+  /* Select product name and order time 
+  for filter coffees sold between January 15th 2017 and February 14th 2017 */
+
+      SELECT p.name, o.order_time FROM orders o
+      Join products p ON o.product_id = p.id
+      WHERE p.name = 'Filter'
+      AND order_time BETWEEN '2017-01-15' AND '2017-02-14';
+
+  /*Select the product name, price, and order time 
+  for all orders from females in January 2017 */
+
+      SELECT p.name, p.price, o.order_time FROM orders o
+      JOIN products p ON o.product_id = p.id
+      JOIN customers c ON o.customer_id = c.id
+      WHERE c.gender = 'F'
+      AND YEAR(o.order_time) = 2017
+      AND MONTH(o.order_time) = 01;
