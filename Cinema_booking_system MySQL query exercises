@@ -3,37 +3,56 @@ USE cinema_booking_system;
 /* How many bookings did customer id 10 make 
 in October 2017? */
 
-    SELECT COUNT(*) FROM bookings b
-    JOIN screenings s ON b.screening_id = s.id
-    WHERE b.customer_id = 10
-    AND YEAR(s.start_time) = 2017
-    AND MONTH(s.start_time) = 10;
+        SELECT COUNT(*) FROM bookings b
+        JOIN screenings s ON b.screening_id = s.id
+        WHERE b.customer_id = 10
+        AND YEAR(s.start_time) = 2017
+        AND MONTH(s.start_time) = 10;
 
 /* Count the number of screenings for Blade Runner 2049
 in October 2017 */
 
-    SELECT COUNT(*) FROM screenings s
-    JOIN films f ON s.film_id = f.id
-    WHERE f.name = 'Blade Runner 2049'
-    AND YEAR(s.start_time) = 2017
-    AND MONTH(s.start_time) = 10;
+        SELECT COUNT(*) FROM screenings s
+        JOIN films f ON s.film_id = f.id
+        WHERE f.name = 'Blade Runner 2049'
+        AND YEAR(s.start_time) = 2017
+        AND MONTH(s.start_time) = 10;
 
 /* Count the number of unique customers
 who made a booking for October 2017 */
 
-  --Solution using DISTINCT function
+    --Solution using DISTINCT function
 
-    SELECT COUNT(DISTINCT(b.customer_id)) FROM bookings b
-    JOIN screenings s ON b.screening_id = s.id
-    WHERE YEAR(s.start_time) = 2017
-    AND MONTH(s.start_time) = 10; 
+        SELECT COUNT(DISTINCT(b.customer_id)) FROM bookings b
+        JOIN screenings s ON b.screening_id = s.id
+        WHERE YEAR(s.start_time) = 2017
+        AND MONTH(s.start_time) = 10; 
 
-  --Solution using ROW_NUMBER function
+    --Solution using ROW_NUMBER function
 
-    WITH CustomerCount AS
-    (
-      SELECT *, ROW_NUMBER() OVER(PARTITION BY customer_id) AS ranks
-        FROM bookings
-    )
-    SELECT COUNT(customer_id) FROM CustomerCount
-    WHERE ranks = 1;
+        WITH CustomerCount AS
+        (
+          SELECT *, ROW_NUMBER() OVER(PARTITION BY customer_id) AS ranks
+            FROM bookings
+        )
+        SELECT COUNT(customer_id) FROM CustomerCount
+        WHERE ranks = 1;
+    
+/* Select the customer id and count the number of reserved seats 
+grouped by customer for October 2017 */
+
+        SELECT b.customer_id, COUNT(rs.seat_id) FROM bookings b
+        JOIN reserved_seat rs ON b.id = rs.booking_id
+        JOIN screenings s ON b.screening_id = s.id
+        WHERE YEAR(s.start_time) = 2017
+        AND MONTH(s.start_time) = 10
+        GROUP BY b.customer_id
+        ORDER BY b.customer_id;
+
+/* Select the film name and count the number of screenings 
+for each film that is over 2 hours long. */
+
+        SELECT f.name, COUNT(s.id) FROM films f
+        JOIN screenings s ON f.id = s.film_id
+        WHERE f.length_min > 120
+        GROUP BY f.name;
