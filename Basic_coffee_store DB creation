@@ -1,9 +1,9 @@
 /* Using Data Definition Language (DDL), 
 create a MySQL database called coffee_store */
 
-	CREATE DATABASE coffee_store;
+	CREATE DATABASE basic_coffee_store;
 
-	USE coffee_store;
+	USE basic_coffee_store;
 
 	CREATE TABLE products (
 		id INT AUTO_INCREMENT PRIMARY KEY,
